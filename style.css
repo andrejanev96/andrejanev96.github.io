@@ -1174,7 +1174,7 @@ footer {
   /* Add active navigation styling */
   .nav-links a.active,
   .mobile-menu a.active {
-    color: #0abab5;
+    color: #ffffff;
     font-weight: 600;
   }
 
