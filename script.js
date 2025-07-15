@@ -98,24 +98,16 @@ function initializeInteractiveFeatures() {
   // Add click effects for buttons
   const buttons = document.querySelectorAll(".btn");
   buttons.forEach((button) => {
-    button.addEventListener("click", function (e) {
-      // Create ripple effect
-      const ripple = document.createElement("span");
-      const rect = this.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const x = e.clientX - rect.left - size / 2;
-      const y = e.clientY - rect.top - size / 2;
+    button.addEventListener("mousedown", function () {
+      this.style.transform = "translateY(0) scale(0.98)";
+    });
 
-      ripple.style.width = ripple.style.height = size + "px";
-      ripple.style.left = x + "px";
-      ripple.style.top = y + "px";
-      ripple.classList.add("ripple");
+    button.addEventListener("mouseup", function () {
+      this.style.transform = "translateY(-2px) scale(1)";
+    });
 
-      this.appendChild(ripple);
-
-      setTimeout(() => {
-        ripple.remove();
-      }, 600);
+    button.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0) scale(1)";
     });
   });
 }
