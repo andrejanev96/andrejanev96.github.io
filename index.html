@@ -300,29 +300,102 @@
       <section id="projects" class="container">
         <h2 class="section-title">Portfolio Projects</h2>
         <div class="projects-grid">
-          <!-- Projects will be added here based on your selection -->
-          <div class="project-placeholder">
-            <p
-              style="
-                text-align: center;
-                color: #666;
-                padding: 3rem;
-                font-size: 1.1rem;
-              "
-            >
-              <i
-                class="fas fa-plus-circle"
+          <div class="project-card">
+            <div class="project-image">
+              <div
                 style="
-                  font-size: 2rem;
-                  color: #0abab5;
-                  display: block;
-                  margin-bottom: 1rem;
+                  background: linear-gradient(
+                    135deg,
+                    #1a1a1a 0%,
+                    #c41e3a 50%,
+                    #d4af37 100%
+                  );
+                  height: 200px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  position: relative;
+                  overflow: hidden;
                 "
-              ></i>
-              Projects to be added soon!
-              <br />
-              Stay tuned for updates.
-            </p>
+              >
+                <div
+                  style="
+                    position: absolute;
+                    top: 20px;
+                    left: 20px;
+                    background: rgba(212, 175, 55, 0.9);
+                    color: #000;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 0.8rem;
+                    font-weight: bold;
+                  "
+                >
+                  v2.0
+                </div>
+                <div style="text-align: center; color: white">
+                  <div style="font-size: 3rem; margin-bottom: 10px">🎯</div>
+                  <div style="font-size: 1.2rem; font-weight: bold">
+                    AI Ammo Identifier
+                  </div>
+                  <div style="font-size: 0.9rem; opacity: 0.8">
+                    GPT-4 Vision + Express.js
+                  </div>
+                </div>
+                <div
+                  style="
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+                    background: rgba(196, 30, 58, 0.9);
+                    color: white;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-size: 0.7rem;
+                  "
+                >
+                  LIVE
+                </div>
+              </div>
+            </div>
+            <div class="project-content">
+              <h3 class="project-title">AI Ammunition Identification Tool</h3>
+              <p class="project-description">
+                Professional-grade web application that uses OpenAI's GPT-4
+                Vision API to identify ammunition from photos. Features
+                multi-image analysis, real-time validation, comprehensive
+                ballistics data, and email lead generation. Built with
+                Express.js backend and deployed on Railway.
+              </p>
+              <div class="project-tech">
+                <span class="tech-tag">Node.js</span>
+                <span class="tech-tag">Express.js</span>
+                <span class="tech-tag">OpenAI GPT-4V</span>
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">Railway</span>
+                <span class="tech-tag">REST API</span>
+              </div>
+              <div class="project-links">
+                <a
+                  href="https://ammo-identifier-production.up.railway.app/"
+                  class="project-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  Live Demo
+                </a>
+                <a
+                  href="https://github.com/andrejanev96"
+                  class="project-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fab fa-github"></i>
+                  View Code
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
