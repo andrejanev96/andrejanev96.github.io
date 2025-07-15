@@ -485,7 +485,7 @@ main {
 }
 
 section {
-  padding: 80px 0;
+  padding: 100px 0;
 }
 
 .section-title {
@@ -508,6 +508,15 @@ section {
 }
 
 /* Skills Section */
+
+#skills {
+  padding: 120px 0 100px;
+}
+
+#experience {
+  padding: 120px 0;
+}
+
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -656,6 +665,11 @@ section {
 }
 
 /* Projects Section - Alternating Layout */
+
+#projects {
+  padding: 120px 0;
+}
+
 .projects-grid {
   max-width: 1100px;
   margin: 3rem auto 0;
@@ -899,6 +913,10 @@ section {
 }
 
 /* Contact Section */
+#contact {
+  padding: 120px 0;
+}
+
 .contact {
   background: linear-gradient(135deg, #ffedf3 0%, #adeed9 100%);
 }
@@ -990,7 +1008,7 @@ footer {
   }
 
   .hero {
-    padding: 100px 0 60px;
+    padding: 140px 0 120px;
     text-align: center;
   }
 
@@ -1032,8 +1050,9 @@ footer {
   }
 
   .skills-grid {
+    margin-top: 4rem;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2.5rem;
   }
 
   @media (max-width: 768px) {
@@ -1054,7 +1073,7 @@ footer {
       width: calc(100% - 60px);
       left: 60px !important;
       text-align: left !important;
-      margin-bottom: 2rem;
+      margin-bottom: 4rem;
     }
 
     .experience-content {
@@ -1073,7 +1092,8 @@ footer {
 
     .projects-grid {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 5rem;
+      margin: 4rem auto 0;
     }
 
     .project-content {
@@ -1260,6 +1280,31 @@ footer {
 
   /* Mobile responsive */
   @media (max-width: 768px) {
+    section {
+      padding: 80px 0; /* Slightly less on mobile but still generous */
+    }
+
+    .hero {
+      padding: 120px 0 80px;
+    }
+
+    #skills {
+      padding: 100px 0 80px;
+    }
+
+    .skills-grid {
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .experience-item {
+      margin-bottom: 3rem;
+    }
+
+    .projects-grid {
+      gap: 3rem;
+    }
+
     .profile-img {
       width: 180px; /* Larger than before on mobile too */
       height: 180px; /* Was 140px */
@@ -1536,6 +1581,14 @@ footer {
 }
 
 @media (max-width: 480px) {
+  section {
+    padding: 60px 0;
+  }
+
+  .hero {
+    padding: 100px 0 60px;
+  }
+
   .contact-form-container {
     padding: 1.5rem;
   }
