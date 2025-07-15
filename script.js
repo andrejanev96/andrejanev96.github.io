@@ -207,3 +207,194 @@ const throttledScrollHandler = throttle(() => {
 }, 16); // ~60fps
 
 window.addEventListener("scroll", throttledScrollHandler);
+
+// Contact form handling
+document.addEventListener("DOMContentLoaded", function () {
+  const contactForm = document.getElementById("contactForm");
+
+  if (contactForm) {
+    contactForm.addEventListener("submit", handleFormSubmit);
+  }
+});
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+
+  const submitBtn = e.target.querySelector(".form-submit-btn");
+  const originalText = submitBtn.innerHTML;
+
+  // Show loading state
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  submitBtn.disabled = true;
+
+  // Get form data
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+
+  // Simulate form submission (replace with your actual form handler)
+  setTimeout(() => {
+    // Success state
+    submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+    submitBtn.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+
+    // Show success message
+    showNotification(
+      "Thank you! Your message has been sent successfully. I'll get back to you soon!",
+      "success"
+    );
+
+    // Reset form
+    e.target.reset();
+
+    // Reset button after 3 seconds
+    setTimeout(() => {
+      submitBtn.innerHTML = originalText;
+      submitBtn.style.background = "linear-gradient(135deg, #0abab5, #56dfcf)";
+      submitBtn.disabled = false;
+    }, 3000);
+  }, 2000); // Simulate network delay
+}
+
+// Notification system
+function showNotification(message, type = "info") {
+  // Create notification element
+  const notification = document.createElement("div");
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${
+              type === "success" ? "fa-check-circle" : "fa-info-circle"
+            }"></i>
+            <span>${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+  // Add notification styles if not already added
+  if (!document.querySelector("#notification-styles")) {
+    const styles = document.createElement("style");
+    styles.id = "notification-styles";
+    styles.textContent = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+            }
+            
+            .notification.show {
+                transform: translateX(0);
+            }
+            
+            .notification-content {
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .notification-success {
+                border-left: 4px solid #27ae60;
+            }
+            
+            .notification-success i:first-child {
+                color: #27ae60;
+            }
+            
+            .notification-close {
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: #999;
+                margin-left: auto;
+                padding: 0.5rem;
+            }
+            
+            .notification-close:hover {
+                color: #333;
+            }
+        `;
+    document.head.appendChild(styles);
+  }
+
+  // Add to page
+  document.body.appendChild(notification);
+
+  // Trigger animation
+  setTimeout(() => notification.classList.add("show"), 100);
+
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    notification.style.transform = "translateX(400px)";
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
+
+// Form validation enhancement
+function addFormValidation() {
+  const inputs = document.querySelectorAll(
+    ".contact-form input, .contact-form select, .contact-form textarea"
+  );
+
+  inputs.forEach((input) => {
+    input.addEventListener("blur", validateField);
+    input.addEventListener("input", clearValidation);
+  });
+}
+
+function validateField(e) {
+  const field = e.target;
+  const value = field.value.trim();
+
+  // Remove existing validation
+  clearValidation(e);
+
+  if (field.hasAttribute("required") && !value) {
+    showFieldError(field, "This field is required");
+    return false;
+  }
+
+  if (field.type === "email" && value && !isValidEmail(value)) {
+    showFieldError(field, "Please enter a valid email address");
+    return false;
+  }
+
+  return true;
+}
+
+function clearValidation(e) {
+  const field = e.target;
+  field.style.borderColor = "#e1e5e9";
+  const errorMsg = field.parentNode.querySelector(".field-error");
+  if (errorMsg) {
+    errorMsg.remove();
+  }
+}
+
+function showFieldError(field, message) {
+  field.style.borderColor = "#e74c3c";
+
+  const errorDiv = document.createElement("div");
+  errorDiv.className = "field-error";
+  errorDiv.style.color = "#e74c3c";
+  errorDiv.style.fontSize = "0.8rem";
+  errorDiv.style.marginTop = "0.3rem";
+  errorDiv.textContent = message;
+
+  field.parentNode.appendChild(errorDiv);
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// Initialize form validation when DOM is loaded
+document.addEventListener("DOMContentLoaded", addFormValidation);
