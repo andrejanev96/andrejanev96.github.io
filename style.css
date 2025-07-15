@@ -1168,14 +1168,21 @@ footer {
   /* Override project-image for screenshots */
   .project-image {
     background: #1a1a1a;
-    padding: 2rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: auto;
+    min-height: 450px;
   }
 
-  /* New screenshot styling */
+  /* Improved screenshot styling for full display */
   .app-screenshot {
     width: 100%;
     height: auto;
-    max-height: 350px;
+    max-width: 100%;
+    max-height: none;
     object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -1238,14 +1245,49 @@ footer {
     }
   }
 
-  /* Mobile responsive updates for screenshots */
+  /* Fix project card grid alignment */
+  .project-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    min-height: auto;
+    align-items: center;
+  }
+
+  /* Ensure content is properly centered */
+  .project-content {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    height: 100%;
+  }
+
+  /* Mobile responsive updates */
   @media (max-width: 768px) {
+    .project-card {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
     .project-image {
+      height: auto;
+      min-height: 300px;
       padding: 1.5rem;
     }
 
     .app-screenshot {
-      max-height: 200px;
+      max-height: 280px;
+    }
+
+    .project-content {
+      padding: 2rem;
     }
 
     .version-badge {
@@ -1265,11 +1307,16 @@ footer {
 
   @media (max-width: 480px) {
     .project-image {
+      min-height: 250px;
       padding: 1rem;
     }
 
     .app-screenshot {
-      max-height: 160px;
+      max-height: 200px;
+    }
+
+    .project-content {
+      padding: 1.5rem;
     }
   }
 }
