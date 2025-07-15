@@ -801,6 +801,49 @@ section {
     flex-direction: column;
     gap: 1rem;
   }
+  .profile-img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+  }
+
+  .hero-content .subtitle {
+    font-size: 1.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .hero-stats {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    min-width: 120px;
+    padding: 1rem;
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -814,6 +857,22 @@ section {
 
   .project-description {
     font-size: 0.9rem;
+  }
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .profile-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .hero-stats {
+    gap: 1rem;
+  }
+
+  .stat-item {
+    min-width: 100px;
   }
 }
 
@@ -974,8 +1033,6 @@ footer {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-
-  /* Add these rules to the end of your style.css file */
 
   @media (max-width: 768px) {
     .skill-category {
