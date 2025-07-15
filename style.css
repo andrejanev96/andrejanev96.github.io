@@ -1165,4 +1165,111 @@ footer {
       opacity: 0;
     }
   }
+  /* Override project-image for screenshots */
+  .project-image {
+    background: #1a1a1a;
+    padding: 2rem;
+  }
+
+  /* New screenshot styling */
+  .app-screenshot {
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+  }
+
+  .project-card:hover .app-screenshot {
+    transform: scale(1.02);
+  }
+
+  /* Enhanced badge styling */
+  .version-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(212, 175, 55, 0.9);
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  .live-badge {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(46, 204, 113, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 10;
+  }
+
+  .live-indicator {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Mobile responsive updates for screenshots */
+  @media (max-width: 768px) {
+    .project-image {
+      padding: 1.5rem;
+    }
+
+    .app-screenshot {
+      max-height: 200px;
+    }
+
+    .version-badge {
+      top: 15px;
+      left: 15px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+    }
+
+    .live-badge {
+      bottom: 15px;
+      right: 15px;
+      padding: 6px 12px;
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-image {
+      padding: 1rem;
+    }
+
+    .app-screenshot {
+      max-height: 160px;
+    }
+  }
 }
