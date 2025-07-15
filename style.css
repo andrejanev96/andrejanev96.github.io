@@ -1585,18 +1585,6 @@ footer {
   margin-bottom: 3rem;
 }
 
-.contact-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
 .contact-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
