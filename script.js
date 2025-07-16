@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (contactForm) {
     contactForm.addEventListener("submit", handleFormSubmit);
+    addFormValidation();
   }
 });
 
@@ -224,6 +225,15 @@ async function handleFormSubmit(e) {
 
   const submitBtn = e.target.querySelector(".form-submit-btn");
   const originalText = submitBtn.innerHTML;
+
+  // Validate all fields before submitting
+  if (!validateAllFields(e.target)) {
+    showNotification(
+      "Please fill in all required fields correctly before submitting.",
+      "error"
+    );
+    return;
+  }
 
   // Show loading state
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
@@ -252,8 +262,9 @@ async function handleFormSubmit(e) {
         "success"
       );
 
-      // Reset form
+      // Reset form and validation states
       e.target.reset();
+      clearAllValidation(e.target);
 
       // Reset button after 3 seconds
       setTimeout(() => {
@@ -288,7 +299,104 @@ async function handleFormSubmit(e) {
   }
 }
 
-// Enhanced notification system
+// Enhanced form validation
+function addFormValidation() {
+  const inputs = document.querySelectorAll(
+    ".contact-form input, .contact-form select, .contact-form textarea"
+  );
+
+  inputs.forEach((input) => {
+    input.addEventListener("blur", function (e) {
+      validateField(e.target);
+    });
+
+    input.addEventListener("input", function (e) {
+      if (e.target.classList.contains("was-validated")) {
+        validateField(e.target);
+      }
+    });
+  });
+}
+
+function validateField(field) {
+  const value = field.value.trim();
+  const isRequired = field.hasAttribute("required");
+
+  // Clear previous validation
+  clearFieldValidation(field);
+
+  // Mark as validated
+  field.classList.add("was-validated");
+
+  let isValid = true;
+
+  if (isRequired && !value) {
+    showFieldError(field, "This field is required");
+    field.classList.add("is-invalid");
+    field.classList.remove("is-valid");
+    isValid = false;
+  } else if (field.type === "email" && value && !isValidEmail(value)) {
+    showFieldError(field, "Please enter a valid email address");
+    field.classList.add("is-invalid");
+    field.classList.remove("is-valid");
+    isValid = false;
+  } else if (field.tagName === "SELECT" && isRequired && !value) {
+    showFieldError(field, "Please select an option");
+    field.classList.add("is-invalid");
+    field.classList.remove("is-valid");
+    isValid = false;
+  } else if (value) {
+    // Field has value and passes validation
+    field.classList.add("is-valid");
+    field.classList.remove("is-invalid");
+  }
+
+  return isValid;
+}
+
+function validateAllFields(form) {
+  const inputs = form.querySelectorAll(
+    "input[required], select[required], textarea[required]"
+  );
+  let allValid = true;
+
+  inputs.forEach((input) => {
+    if (!validateField(input)) {
+      allValid = false;
+    }
+  });
+
+  return allValid;
+}
+
+function clearFieldValidation(field) {
+  field.classList.remove("is-valid", "is-invalid");
+  const errorMsg = field.parentNode.querySelector(".field-error");
+  if (errorMsg) {
+    errorMsg.remove();
+  }
+}
+
+function clearAllValidation(form) {
+  const inputs = form.querySelectorAll("input, select, textarea");
+  inputs.forEach((input) => {
+    input.classList.remove("was-validated", "is-valid", "is-invalid");
+    clearFieldValidation(input);
+  });
+}
+
+function showFieldError(field, message) {
+  const errorDiv = document.createElement("div");
+  errorDiv.className = "field-error";
+  errorDiv.textContent = message;
+  field.parentNode.appendChild(errorDiv);
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// Enhanced notification system (keep existing)
 function showNotification(message, type = "info") {
   // Remove any existing notifications
   const existingNotifications = document.querySelectorAll(".notification");
@@ -379,10 +487,6 @@ function addNotificationStyles() {
         border-left: 4px solid #e74c3c;
       }
       
-      .notification-warning {
-        border-left: 4px solid #f39c12;
-      }
-      
       .notification-success i:first-child {
         color: #27ae60;
         font-size: 1.2rem;
@@ -391,12 +495,6 @@ function addNotificationStyles() {
       
       .notification-error i:first-child {
         color: #e74c3c;
-        font-size: 1.2rem;
-        margin-top: 0.1rem;
-      }
-      
-      .notification-warning i:first-child {
-        color: #f39c12;
         font-size: 1.2rem;
         margin-top: 0.1rem;
       }
