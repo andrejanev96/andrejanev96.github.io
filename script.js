@@ -209,7 +209,6 @@ const throttledScrollHandler = throttle(() => {
 window.addEventListener("scroll", throttledScrollHandler);
 
 // Enhanced Contact Form with Formspree Integration
-// Replace your existing contact form JavaScript with this
 
 document.addEventListener("DOMContentLoaded", function () {
   const contactForm = document.getElementById("contactForm");
@@ -226,10 +225,27 @@ async function handleFormSubmit(e) {
   const submitBtn = e.target.querySelector(".form-submit-btn");
   const originalText = submitBtn.innerHTML;
 
-  // Validate all fields before submitting
-  if (!validateAllFields(e.target)) {
+  // Simple validation check
+  const requiredFields = e.target.querySelectorAll(
+    "input[required], select[required], textarea[required]"
+  );
+  let hasErrors = false;
+
+  requiredFields.forEach((field) => {
+    const value = field.value.trim();
+    if (!value || (field.tagName === "SELECT" && value === "")) {
+      showFieldError(field, "This field is required");
+      field.style.borderColor = "#e74c3c";
+      hasErrors = true;
+    } else {
+      clearFieldValidation(field);
+      field.style.borderColor = "#27ae60";
+    }
+  });
+
+  if (hasErrors) {
     showNotification(
-      "Please fill in all required fields correctly before submitting.",
+      "Please fill in all required fields before submitting.",
       "error"
     );
     return;
@@ -262,9 +278,14 @@ async function handleFormSubmit(e) {
         "success"
       );
 
-      // Reset form and validation states
+      // Reset form
       e.target.reset();
-      clearAllValidation(e.target);
+
+      // Clear all styling
+      requiredFields.forEach((field) => {
+        field.style.borderColor = "#e1e5e9";
+        clearFieldValidation(field);
+      });
 
       // Reset button after 3 seconds
       setTimeout(() => {
@@ -274,9 +295,7 @@ async function handleFormSubmit(e) {
         submitBtn.disabled = false;
       }, 3000);
     } else {
-      // Handle Formspree errors
-      const data = await response.json();
-      throw new Error(data.error || "Form submission failed");
+      throw new Error("Form submission failed");
     }
   } catch (error) {
     console.error("Form submission error:", error);
@@ -299,7 +318,7 @@ async function handleFormSubmit(e) {
   }
 }
 
-// Enhanced form validation
+// Simple form validation
 function addFormValidation() {
   const inputs = document.querySelectorAll(
     ".contact-form input, .contact-form select, .contact-form textarea"
@@ -307,98 +326,42 @@ function addFormValidation() {
 
   inputs.forEach((input) => {
     input.addEventListener("blur", function (e) {
-      validateField(e.target);
-    });
-
-    input.addEventListener("input", function (e) {
-      if (e.target.classList.contains("was-validated")) {
-        validateField(e.target);
+      if (e.target.hasAttribute("required")) {
+        const value = e.target.value.trim();
+        if (!value) {
+          e.target.style.borderColor = "#e74c3c";
+          showFieldError(e.target, "This field is required");
+        } else {
+          e.target.style.borderColor = "#27ae60";
+          clearFieldValidation(e.target);
+        }
       }
     });
+
+    input.addEventListener("focus", function (e) {
+      e.target.style.borderColor = "#0abab5";
+      clearFieldValidation(e.target);
+    });
   });
-}
-
-function validateField(field) {
-  const value = field.value.trim();
-  const isRequired = field.hasAttribute("required");
-
-  // Clear previous validation
-  clearFieldValidation(field);
-
-  // Mark as validated
-  field.classList.add("was-validated");
-
-  let isValid = true;
-
-  if (isRequired && !value) {
-    showFieldError(field, "This field is required");
-    field.classList.add("is-invalid");
-    field.classList.remove("is-valid");
-    isValid = false;
-  } else if (field.type === "email" && value && !isValidEmail(value)) {
-    showFieldError(field, "Please enter a valid email address");
-    field.classList.add("is-invalid");
-    field.classList.remove("is-valid");
-    isValid = false;
-  } else if (field.tagName === "SELECT" && isRequired && !value) {
-    showFieldError(field, "Please select an option");
-    field.classList.add("is-invalid");
-    field.classList.remove("is-valid");
-    isValid = false;
-  } else if (value) {
-    // Field has value and passes validation
-    field.classList.add("is-valid");
-    field.classList.remove("is-invalid");
-  }
-
-  return isValid;
-}
-
-function validateAllFields(form) {
-  const inputs = form.querySelectorAll(
-    "input[required], select[required], textarea[required]"
-  );
-  let allValid = true;
-
-  inputs.forEach((input) => {
-    if (!validateField(input)) {
-      allValid = false;
-    }
-  });
-
-  return allValid;
 }
 
 function clearFieldValidation(field) {
-  field.classList.remove("is-valid", "is-invalid");
   const errorMsg = field.parentNode.querySelector(".field-error");
   if (errorMsg) {
     errorMsg.remove();
   }
 }
 
-function clearAllValidation(form) {
-  const inputs = form.querySelectorAll("input, select, textarea");
-  inputs.forEach((input) => {
-    input.classList.remove("was-validated", "is-valid", "is-invalid");
-    clearFieldValidation(input);
-  });
-}
-
 function showFieldError(field, message) {
+  clearFieldValidation(field); // Remove existing error first
   const errorDiv = document.createElement("div");
   errorDiv.className = "field-error";
   errorDiv.textContent = message;
   field.parentNode.appendChild(errorDiv);
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-// Enhanced notification system (keep existing)
+// Keep the existing notification system
 function showNotification(message, type = "info") {
-  // Remove any existing notifications
   const existingNotifications = document.querySelectorAll(".notification");
   existingNotifications.forEach((notification) => notification.remove());
 
@@ -414,16 +377,10 @@ function showNotification(message, type = "info") {
     </div>
   `;
 
-  // Add notification styles if not already added
   addNotificationStyles();
-
-  // Add to page
   document.body.appendChild(notification);
-
-  // Trigger animation
   setTimeout(() => notification.classList.add("show"), 100);
 
-  // Auto remove after 6 seconds
   setTimeout(() => {
     if (notification.parentNode) {
       notification.style.transform = "translateX(400px)";
@@ -442,8 +399,6 @@ function getNotificationIcon(type) {
       return "fa-check-circle";
     case "error":
       return "fa-exclamation-triangle";
-    case "warning":
-      return "fa-exclamation-circle";
     default:
       return "fa-info-circle";
   }
@@ -533,10 +488,6 @@ function addNotificationStyles() {
         
         .notification.show {
           transform: translateY(0);
-        }
-        
-        .notification-content {
-          padding: 1rem;
         }
       }
     `;
