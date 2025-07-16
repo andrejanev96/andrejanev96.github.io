@@ -208,7 +208,9 @@ const throttledScrollHandler = throttle(() => {
 
 window.addEventListener("scroll", throttledScrollHandler);
 
-// Contact form handling
+// Enhanced Contact Form with Formspree Integration
+// Replace your existing contact form JavaScript with this
+
 document.addEventListener("DOMContentLoaded", function () {
   const contactForm = document.getElementById("contactForm");
 
@@ -217,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
   e.preventDefault();
 
   const submitBtn = e.target.querySelector(".form-submit-btn");
@@ -227,24 +229,55 @@ function handleFormSubmit(e) {
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   submitBtn.disabled = true;
 
-  // Get form data
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData);
+  try {
+    const formData = new FormData(e.target);
 
-  // Simulate form submission (replace with your actual form handler)
-  setTimeout(() => {
-    // Success state
-    submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-    submitBtn.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+    // Submit to Formspree
+    const response = await fetch(e.target.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-    // Show success message
+    if (response.ok) {
+      // Success state
+      submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+      submitBtn.style.background = "linear-gradient(135deg, #27ae60, #2ecc71)";
+
+      // Show success notification
+      showNotification(
+        "Thank you! Your message has been sent successfully. I'll get back to you soon!",
+        "success"
+      );
+
+      // Reset form
+      e.target.reset();
+
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.style.background =
+          "linear-gradient(135deg, #0abab5, #56dfcf)";
+        submitBtn.disabled = false;
+      }, 3000);
+    } else {
+      // Handle Formspree errors
+      const data = await response.json();
+      throw new Error(data.error || "Form submission failed");
+    }
+  } catch (error) {
+    console.error("Form submission error:", error);
+
+    // Error state
+    submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+    submitBtn.style.background = "linear-gradient(135deg, #e74c3c, #c0392b)";
+
     showNotification(
-      "Thank you! Your message has been sent successfully. I'll get back to you soon!",
-      "success"
+      "Sorry, there was an error sending your message. Please try again or email me directly at andrejanev96@gmail.com",
+      "error"
     );
-
-    // Reset form
-    e.target.reset();
 
     // Reset button after 3 seconds
     setTimeout(() => {
@@ -252,78 +285,29 @@ function handleFormSubmit(e) {
       submitBtn.style.background = "linear-gradient(135deg, #0abab5, #56dfcf)";
       submitBtn.disabled = false;
     }, 3000);
-  }, 2000); // Simulate network delay
+  }
 }
 
-// Notification system
+// Enhanced notification system
 function showNotification(message, type = "info") {
-  // Create notification element
+  // Remove any existing notifications
+  const existingNotifications = document.querySelectorAll(".notification");
+  existingNotifications.forEach((notification) => notification.remove());
+
   const notification = document.createElement("div");
   notification.className = `notification notification-${type}`;
   notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas ${
-              type === "success" ? "fa-check-circle" : "fa-info-circle"
-            }"></i>
-            <span>${message}</span>
-            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
+    <div class="notification-content">
+      <i class="fas ${getNotificationIcon(type)}"></i>
+      <span>${message}</span>
+      <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `;
 
   // Add notification styles if not already added
-  if (!document.querySelector("#notification-styles")) {
-    const styles = document.createElement("style");
-    styles.id = "notification-styles";
-    styles.textContent = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-            }
-            
-            .notification.show {
-                transform: translateX(0);
-            }
-            
-            .notification-content {
-                padding: 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-            
-            .notification-success {
-                border-left: 4px solid #27ae60;
-            }
-            
-            .notification-success i:first-child {
-                color: #27ae60;
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                cursor: pointer;
-                color: #999;
-                margin-left: auto;
-                padding: 0.5rem;
-            }
-            
-            .notification-close:hover {
-                color: #333;
-            }
-        `;
-    document.head.appendChild(styles);
-  }
+  addNotificationStyles();
 
   // Add to page
   document.body.appendChild(notification);
@@ -331,14 +315,138 @@ function showNotification(message, type = "info") {
   // Trigger animation
   setTimeout(() => notification.classList.add("show"), 100);
 
-  // Auto remove after 5 seconds
+  // Auto remove after 6 seconds
   setTimeout(() => {
-    notification.style.transform = "translateX(400px)";
-    setTimeout(() => notification.remove(), 300);
-  }, 5000);
+    if (notification.parentNode) {
+      notification.style.transform = "translateX(400px)";
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 300);
+    }
+  }, 6000);
 }
 
-// Form validation enhancement
+function getNotificationIcon(type) {
+  switch (type) {
+    case "success":
+      return "fa-check-circle";
+    case "error":
+      return "fa-exclamation-triangle";
+    case "warning":
+      return "fa-exclamation-circle";
+    default:
+      return "fa-info-circle";
+  }
+}
+
+function addNotificationStyles() {
+  if (!document.querySelector("#notification-styles")) {
+    const styles = document.createElement("style");
+    styles.id = "notification-styles";
+    styles.textContent = `
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 400px;
+        min-width: 300px;
+      }
+      
+      .notification.show {
+        transform: translateX(0);
+      }
+      
+      .notification-content {
+        padding: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .notification-success {
+        border-left: 4px solid #27ae60;
+      }
+      
+      .notification-error {
+        border-left: 4px solid #e74c3c;
+      }
+      
+      .notification-warning {
+        border-left: 4px solid #f39c12;
+      }
+      
+      .notification-success i:first-child {
+        color: #27ae60;
+        font-size: 1.2rem;
+        margin-top: 0.1rem;
+      }
+      
+      .notification-error i:first-child {
+        color: #e74c3c;
+        font-size: 1.2rem;
+        margin-top: 0.1rem;
+      }
+      
+      .notification-warning i:first-child {
+        color: #f39c12;
+        font-size: 1.2rem;
+        margin-top: 0.1rem;
+      }
+      
+      .notification-content span {
+        flex: 1;
+        line-height: 1.4;
+        font-size: 0.95rem;
+      }
+      
+      .notification-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #999;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin-left: 0.5rem;
+      }
+      
+      .notification-close:hover {
+        color: #333;
+        background: #f5f5f5;
+      }
+      
+      @media (max-width: 768px) {
+        .notification {
+          top: 10px;
+          right: 10px;
+          left: 10px;
+          max-width: none;
+          min-width: auto;
+          transform: translateY(-100px);
+        }
+        
+        .notification.show {
+          transform: translateY(0);
+        }
+        
+        .notification-content {
+          padding: 1rem;
+        }
+      }
+    `;
+    document.head.appendChild(styles);
+  }
+}
+
+// Form validation enhancement (optional)
 function addFormValidation() {
   const inputs = document.querySelectorAll(
     ".contact-form input, .contact-form select, .contact-form textarea"
@@ -354,7 +462,6 @@ function validateField(e) {
   const field = e.target;
   const value = field.value.trim();
 
-  // Remove existing validation
   clearValidation(e);
 
   if (field.hasAttribute("required") && !value) {

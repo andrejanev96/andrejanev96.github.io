@@ -1865,3 +1865,120 @@ footer {
     font-size: 0.8rem;
   }
 }
+
+/* ==== ADD THESE ENHANCED CONTACT FORM STYLES ==== */
+/* Add to the end of your existing style.css */
+
+/* Enhanced form validation states */
+.form-group input:valid,
+.form-group select:valid,
+.form-group textarea:valid {
+  border-color: #27ae60;
+}
+
+.form-group input:invalid:not(:focus):not(:placeholder-shown),
+.form-group select:invalid:not(:focus),
+.form-group textarea:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: #e74c3c;
+}
+
+/* Enhanced submit button states */
+.form-submit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.form-submit-btn .fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form field validation error styling */
+.field-error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.field-error::before {
+  content: "⚠️";
+  font-size: 0.7rem;
+}
+
+/* Enhanced focus states */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  transform: translateY(-1px);
+}
+
+/* Enhanced form group hover states */
+.form-group:hover input:not(:focus),
+.form-group:hover select:not(:focus),
+.form-group:hover textarea:not(:focus) {
+  border-color: #0abab5;
+}
+
+/* Success and error button states */
+.form-submit-btn.success {
+  background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+}
+
+.form-submit-btn.error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+}
+
+/* Loading animation enhancement */
+.form-submit-btn:disabled .fa-spinner {
+  margin-right: 0.5rem;
+}
+
+/* Enhanced button interactions */
+.form-submit-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(10, 186, 181, 0.4);
+}
+
+.form-submit-btn:not(:disabled):active {
+  transform: translateY(-1px);
+}
+
+/* Form accessibility improvements */
+.form-group label {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.form-group:focus-within label {
+  color: #0abab5;
+}
+
+/* Required field indicator enhancement */
+.form-group label::after {
+  content: " *";
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Remove asterisk for non-required fields */
+.form-group:has(input:not([required])) label::after,
+.form-group:has(select:not([required])) label::after,
+.form-group:has(textarea:not([required])) label::after {
+  content: "";
+}
+
+/* Fallback for company field (not required) */
+.form-group label[for="company"]::after {
+  content: "";
+}
