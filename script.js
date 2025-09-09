@@ -291,7 +291,7 @@ async function handleFormSubmit(e) {
       setTimeout(() => {
         submitBtn.innerHTML = originalText;
         submitBtn.style.background =
-          "linear-gradient(135deg, #0abab5, #56dfcf)";
+          "linear-gradient(135deg, #6366f1, #06b6d4)";
         submitBtn.disabled = false;
       }, 3000);
     } else {
@@ -312,7 +312,7 @@ async function handleFormSubmit(e) {
     // Reset button after 3 seconds
     setTimeout(() => {
       submitBtn.innerHTML = originalText;
-      submitBtn.style.background = "linear-gradient(135deg, #0abab5, #56dfcf)";
+      submitBtn.style.background = "linear-gradient(135deg, #6366f1, #06b6d4)";
       submitBtn.disabled = false;
     }, 3000);
   }
@@ -339,7 +339,7 @@ function addFormValidation() {
     });
 
     input.addEventListener("focus", function (e) {
-      e.target.style.borderColor = "#0abab5";
+      e.target.style.borderColor = "#6366f1";
       clearFieldValidation(e.target);
     });
   });
