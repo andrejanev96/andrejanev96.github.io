@@ -1,0 +1,24 @@
+{
+  "name": "andrej-portfolio",
+  "version": "1.0.0",
+  "description": "Andrej Janev - Computer Engineer & Product Specialist Portfolio",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "optimize-images": "node scripts/optimize-images.js"
+  },
+  "keywords": [
+    "portfolio",
+    "web-developer",
+    "product-specialist"
+  ],
+  "author": "Andrej Janev",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vite-plugin-html": "^3.2.0",
+    "sharp": "^0.33.0"
+  }
+}
