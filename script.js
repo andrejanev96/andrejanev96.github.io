@@ -1,3 +1,44 @@
+// Dark Mode Toggle
+function initDarkMode() {
+  const themeToggle = document.getElementById('themeToggle');
+  const themeSwitchLabel = document.getElementById('themeSwitchLabel');
+  const body = document.body;
+
+  // Check for saved theme preference or default to light mode
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeToggle.checked = true;
+    themeSwitchLabel.textContent = 'Turn on the lights?';
+  }
+
+  // Toggle theme on checkbox change
+  themeToggle.addEventListener('change', () => {
+    body.classList.toggle('dark-mode');
+    const isDarkMode = body.classList.contains('dark-mode');
+
+    // Update header background immediately
+    const header = document.querySelector('header');
+    if (window.scrollY > 100) {
+      header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
+    } else {
+      header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
+    }
+
+    // Update label text
+    if (isDarkMode) {
+      localStorage.setItem('theme', 'dark');
+      themeSwitchLabel.textContent = 'Turn on the lights?';
+    } else {
+      localStorage.setItem('theme', 'light');
+      themeSwitchLabel.textContent = 'Turn off the lights?';
+    }
+  });
+}
+
+// Initialize dark mode on page load
+document.addEventListener('DOMContentLoaded', initDarkMode);
+
 // Mobile menu functionality
 function toggleMobileMenu() {
   const mobileMenu = document.getElementById("mobileMenu");
@@ -42,10 +83,12 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 // Add scroll effect to header
 window.addEventListener("scroll", () => {
   const header = document.querySelector("header");
+  const isDarkMode = document.body.classList.contains('dark-mode');
+
   if (window.scrollY > 100) {
-    header.style.background = "rgba(255, 255, 255, 0.98)";
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
   } else {
-    header.style.background = "rgba(255, 255, 255, 0.95)";
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
   }
 });
 
@@ -188,10 +231,12 @@ function throttle(func, delay) {
 const throttledScrollHandler = throttle(() => {
   // Header background change
   const header = document.querySelector("header");
+  const isDarkMode = document.body.classList.contains('dark-mode');
+
   if (window.scrollY > 100) {
-    header.style.background = "rgba(255, 255, 255, 0.98)";
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
   } else {
-    header.style.background = "rgba(255, 255, 255, 0.95)";
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
   }
 
   // Update active navigation
