@@ -4,54 +4,6 @@ function initDarkMode() {
   const themeSwitchLabel = document.getElementById('themeSwitchLabel');
   const body = document.body;
 
-  if (themeToggle) {
-    themeToggle.setAttribute('aria-label', 'Toggle dark mode');
-  }
-
-  // Place the theme switch inside the mobile menu on mobile
-  const switchWrapper = document.querySelector('.theme-switch-wrapper');
-  const navEl = document.querySelector('nav');
-  const mobileMenuList = document.querySelector('#mobileMenu ul');
-
-  function applyTogglePlacement() {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (!switchWrapper) return;
-    if (isMobile) {
-      if (mobileMenuList) {
-        // Wrap the switch in a list item for menu styling
-        let li = mobileMenuList.querySelector('li.theme-switch-item');
-        if (!li) {
-          li = document.createElement('li');
-          li.className = 'theme-switch-item';
-          mobileMenuList.appendChild(li);
-        }
-        if (switchWrapper && switchWrapper.parentElement !== li) {
-          li.appendChild(switchWrapper);
-        }
-        // Make sure label is visible in menu context
-        if (themeSwitchLabel) themeSwitchLabel.style.display = 'inline';
-      }
-      // Clear any floating/inline styles from earlier logic
-      if (switchWrapper) {
-        switchWrapper.classList.remove('floating');
-        Object.assign(switchWrapper.style, { position: '', right: '', left: '', top: '', bottom: '' });
-      }
-    } else {
-      // Attach back to nav (end) for desktop
-      if (navEl && switchWrapper && switchWrapper.parentElement !== navEl) {
-        navEl.appendChild(switchWrapper);
-      }
-      if (themeSwitchLabel) themeSwitchLabel.style.display = '';
-    }
-  }
-
-  // Initial placement and on changes
-  applyTogglePlacement();
-  window.addEventListener('resize', applyTogglePlacement);
-  if (window.matchMedia) {
-    window.matchMedia('(max-width: 768px)').addEventListener('change', applyTogglePlacement);
-  }
-
   // Check for saved theme preference or default to light mode
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') {
@@ -65,7 +17,15 @@ function initDarkMode() {
     body.classList.toggle('dark-mode');
     const isDarkMode = body.classList.contains('dark-mode');
 
-    // Update label text and localStorage
+    // Update header background immediately
+    const header = document.querySelector('header');
+    if (window.scrollY > 100) {
+      header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
+    } else {
+      header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
+    }
+
+    // Update label text
     if (isDarkMode) {
       localStorage.setItem('theme', 'dark');
       themeSwitchLabel.textContent = 'Turn on the lights?';
@@ -120,6 +80,18 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
+// Add scroll effect to header
+window.addEventListener("scroll", () => {
+  const header = document.querySelector("header");
+  const isDarkMode = document.body.classList.contains('dark-mode');
+
+  if (window.scrollY > 100) {
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
+  } else {
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
+  }
+});
+
 // Animate elements on scroll
 const observerOptions = {
   threshold: 0.1,
@@ -154,8 +126,33 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function initializeInteractiveFeatures() {
-  // Interactive features can be added here if needed
-  // Currently using CSS hover effects which are more performant
+  // Add hover effects for skill categories
+  const skillCategories = document.querySelectorAll(".skill-category");
+  skillCategories.forEach((category) => {
+    category.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-5px) scale(1.02)";
+    });
+
+    category.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0) scale(1)";
+    });
+  });
+
+  // Add click effects for buttons
+  const buttons = document.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.addEventListener("mousedown", function () {
+      this.style.transform = "translateY(0) scale(0.98)";
+    });
+
+    button.addEventListener("mouseup", function () {
+      this.style.transform = "translateY(-2px) scale(1)";
+    });
+
+    button.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0) scale(1)";
+    });
+  });
 }
 
 // Keyboard navigation support
@@ -167,7 +164,7 @@ document.addEventListener("keydown", function (e) {
 
   // Navigate through sections with arrow keys (optional enhancement)
   if (e.altKey) {
-    const sections = ["home", "testimonials", "skills", "experience", "projects", "contact"];
+    const sections = ["home", "skills", "experience", "projects", "contact"];
     const currentSection = getCurrentSection();
     const currentIndex = sections.indexOf(currentSection);
 
@@ -197,6 +194,19 @@ function getCurrentSection() {
   return currentSection;
 }
 
+// Update active navigation link based on scroll position
+window.addEventListener("scroll", () => {
+  const currentSection = getCurrentSection();
+  const navLinks = document.querySelectorAll(".nav-links a, .mobile-menu a");
+
+  navLinks.forEach((link) => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === `#${currentSection}`) {
+      link.classList.add("active");
+    }
+  });
+});
+
 // Performance optimization: Throttle scroll events
 function throttle(func, delay) {
   let timeoutId;
@@ -219,13 +229,14 @@ function throttle(func, delay) {
 
 // Apply throttling to scroll events
 const throttledScrollHandler = throttle(() => {
-  // Header background change - use class instead of inline styles
+  // Header background change
   const header = document.querySelector("header");
+  const isDarkMode = document.body.classList.contains('dark-mode');
 
   if (window.scrollY > 100) {
-    header.classList.add("scrolled");
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)";
   } else {
-    header.classList.remove("scrolled");
+    header.style.background = isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)";
   }
 
   // Update active navigation
@@ -528,281 +539,3 @@ function addNotificationStyles() {
     document.head.appendChild(styles);
   }
 }
-
-// ===== TESTIMONIALS CAROUSEL =====
-document.addEventListener('DOMContentLoaded', function() {
-  const track = document.querySelector('.carousel-track');
-  // If the carousel isn't on the page, exit early
-  if (!track) return;
-  const carouselRoot = document.querySelector('.testimonials-carousel');
-  const slides = Array.from(track.children);
-  const nextButton = document.querySelector('.carousel-next');
-  const prevButton = document.querySelector('.carousel-prev');
-  const indicatorsContainer = document.querySelector('.carousel-indicators');
-
-  let currentIndex = 0;
-  let autoPlayInterval;
-
-  // A11y: annotate carousel semantics
-  if (carouselRoot) {
-    carouselRoot.setAttribute('role', 'region');
-    carouselRoot.setAttribute('aria-roledescription', 'carousel');
-    carouselRoot.setAttribute('aria-label', 'Client testimonials');
-  }
-  if (indicatorsContainer) {
-    indicatorsContainer.setAttribute('role', 'tablist');
-    indicatorsContainer.setAttribute('aria-label', 'Carousel indicators');
-  }
-
-  // Progressive perf: lazy-load testimonial images
-  document.querySelectorAll('.testimonial-img').forEach((img, i) => {
-    try {
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      // Lower priority for below-the-fold images
-      if ('fetchPriority' in img) img.fetchPriority = 'low';
-    } catch (_) {}
-  });
-
-  // Create indicators
-  slides.forEach((_, index) => {
-    const indicator = document.createElement('button');
-    indicator.classList.add('carousel-indicator');
-    indicator.setAttribute('aria-label', `Go to testimonial ${index + 1}`);
-    indicator.setAttribute('role', 'tab');
-    indicator.setAttribute('aria-controls', `carousel-slide-${index}`);
-    indicator.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
-    if (index === 0) indicator.classList.add('active');
-    indicator.addEventListener('click', () => goToSlide(index));
-    indicatorsContainer.appendChild(indicator);
-  });
-
-  const indicators = Array.from(indicatorsContainer.children);
-
-  // Move to specific slide
-  function goToSlide(targetIndex) {
-    if (targetIndex < 0) targetIndex = slides.length - 1;
-    if (targetIndex >= slides.length) targetIndex = 0;
-
-    currentIndex = targetIndex;
-
-    // Move track to align the target slide with container's left edge
-    // Using pixel offsets ensures correctness with flex gaps and varying widths
-    const targetSlide = slides[currentIndex];
-    const offset = targetSlide ? targetSlide.offsetLeft : 0;
-    track.style.transform = `translateX(${-offset}px)`;
-
-    // Update active slide class for blur effect
-    slides.forEach((slide, index) => {
-      slide.classList.remove('active');
-    });
-    slides[currentIndex].classList.add('active');
-
-    // Update indicators
-    indicators.forEach((indicator, index) => {
-      const isActive = index === currentIndex;
-      indicator.classList.toggle('active', isActive);
-      indicator.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      if (isActive) {
-        indicator.setAttribute('aria-current', 'true');
-      } else {
-        indicator.removeAttribute('aria-current');
-      }
-    });
-  }
-
-  // Next/Previous handlers
-  nextButton.addEventListener('click', () => {
-    stopAutoPlay();
-    goToSlide(currentIndex + 1);
-    startAutoPlay();
-  });
-
-  prevButton.addEventListener('click', () => {
-    stopAutoPlay();
-    goToSlide(currentIndex - 1);
-    startAutoPlay();
-  });
-
-  // Auto-play functionality
-  function startAutoPlay() {
-    stopAutoPlay(); // Clear any existing interval
-    autoPlayInterval = setInterval(() => {
-      goToSlide(currentIndex + 1);
-    }, 8000); // 8 seconds
-  }
-
-  function stopAutoPlay() {
-    if (autoPlayInterval) {
-      clearInterval(autoPlayInterval);
-    }
-  }
-
-  // Pause auto-play on hover
-  track.addEventListener('mouseenter', stopAutoPlay);
-  track.addEventListener('mouseleave', startAutoPlay);
-
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-      prevButton.click();
-    } else if (e.key === 'ArrowRight') {
-      nextButton.click();
-    }
-  });
-
-  // Touch/Swipe support for mobile
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  track.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    stopAutoPlay();
-  });
-
-  track.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-    startAutoPlay();
-  });
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-    if (touchStartX - touchEndX > swipeThreshold) {
-      // Swiped left - go to next
-      goToSlide(currentIndex + 1);
-    } else if (touchEndX - touchStartX > swipeThreshold) {
-      // Swiped right - go to previous
-      goToSlide(currentIndex - 1);
-    }
-  }
-
-  // Initialize
-  goToSlide(0); // Set initial active state
-
-  // Respect reduced-motion preferences for autoplay
-  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!prefersReduced) {
-    startAutoPlay();
-  }
-
-  // Recalculate position on resize/orientation changes
-  window.addEventListener('resize', () => {
-    // Keep the current slide centered after layout changes
-    goToSlide(currentIndex);
-  });
-
-  // Pause autoplay when tab is not visible
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      stopAutoPlay();
-    } else if (!prefersReduced) {
-      startAutoPlay();
-    }
-  });
-
-  // ===== Lightbox for testimonial images =====
-  const testimonialImgs = Array.from(document.querySelectorAll('.testimonial-img'));
-  let lbIndex = 0;
-
-  // Create overlay once
-  let lb = document.getElementById('imageLightbox');
-  if (!lb) {
-    lb = document.createElement('div');
-    lb.id = 'imageLightbox';
-    lb.className = 'lightbox-overlay';
-    lb.setAttribute('role', 'dialog');
-    lb.setAttribute('aria-modal', 'true');
-    lb.innerHTML = `
-      <button class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>
-      <button class="lightbox-btn lightbox-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
-      <div class="lightbox-content"><img class="lightbox-img" alt="Testimonial full view" /></div>
-      <button class="lightbox-btn lightbox-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
-    `;
-    document.body.appendChild(lb);
-  }
-
-  const lbImg = lb.querySelector('.lightbox-img');
-  const lbClose = lb.querySelector('.lightbox-close');
-  const lbPrev = lb.querySelector('.lightbox-prev');
-  const lbNext = lb.querySelector('.lightbox-next');
-
-  function openLightbox(index) {
-    lbIndex = index;
-    const node = testimonialImgs[lbIndex];
-    if (!node) return;
-    const src = node.currentSrc || node.src; // prefer currentSrc from <picture>
-    const alt = node.alt || 'Testimonial image';
-    lbImg.src = src;
-    lbImg.alt = alt;
-    lb.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    lb.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  function showOffset(delta) {
-    lbIndex = (lbIndex + delta + testimonialImgs.length) % testimonialImgs.length;
-    const node = testimonialImgs[lbIndex];
-    if (!node) return;
-    const src = node.currentSrc || node.src;
-    lbImg.src = src;
-    lbImg.alt = node.alt || 'Testimonial image';
-  }
-
-  testimonialImgs.forEach((img, i) => {
-    img.style.cursor = 'zoom-in';
-    img.addEventListener('click', (e) => {
-      e.stopPropagation();
-      stopAutoPlay();
-      openLightbox(i);
-    });
-    // Add visible zoom hint button (especially for mobile)
-    const card = img.closest('.testimonial-card');
-    if (card && !card.querySelector('.zoom-hint')) {
-      const zh = document.createElement('button');
-      zh.className = 'zoom-hint';
-      zh.setAttribute('aria-label', 'Tap to zoom');
-      zh.innerHTML = '<i class="fas fa-search-plus"></i>';
-      zh.addEventListener('click', (ev) => {
-        ev.stopPropagation();
-        stopAutoPlay();
-        openLightbox(i);
-      });
-      card.appendChild(zh);
-    }
-  });
-
-  lbClose.addEventListener('click', closeLightbox);
-  lbPrev.addEventListener('click', () => showOffset(-1));
-  lbNext.addEventListener('click', () => showOffset(1));
-  lb.addEventListener('click', (e) => {
-    if (e.target === lb) closeLightbox();
-  });
-
-  // Keyboard controls for lightbox
-  document.addEventListener('keydown', (e) => {
-    if (!lb.classList.contains('show')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') showOffset(-1);
-    if (e.key === 'ArrowRight') showOffset(1);
-  });
-
-  // Touch swipe in lightbox
-  let lbStartX = 0;
-  lb.addEventListener('touchstart', (e) => {
-    if (!lb.classList.contains('show')) return;
-    lbStartX = e.changedTouches[0].screenX;
-  });
-  lb.addEventListener('touchend', (e) => {
-    if (!lb.classList.contains('show')) return;
-    const endX = e.changedTouches[0].screenX;
-    const dx = endX - lbStartX;
-    if (Math.abs(dx) > 50) {
-      showOffset(dx > 0 ? -1 : 1);
-    }
-  });
-});
