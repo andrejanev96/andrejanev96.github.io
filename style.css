@@ -2055,41 +2055,16 @@ footer {
       padding: 1.5rem;
     }
 
-    .experience-timeline {
-      max-width: 100%;
-      padding: 0 10px;
-    }
-
-    .experience-timeline::before {
-      left: 20px;
-    }
-
-    .experience-item {
-      width: calc(100% - 60px);
-      left: 60px !important;
-      text-align: left !important;
-      margin-bottom: 4rem;
-    }
-
-    .experience-content {
-      padding: 1.5rem;
-    }
-
-    .experience-content::before {
-      left: -20px !important;
-      border-right-color: white !important;
-      border-left-color: transparent !important;
-    }
-
-    /* Keep timeline dots inside the content on mobile to avoid overflow */
-    .experience-item::after {
-      left: 20px !important;
-      right: auto !important;
-    }
-
-    .experience-dot {
-      left: 20px !important;
-    }
+    /* Simplify timeline to a clean stacked list on mobile */
+    .experience-timeline { max-width: 100%; padding: 0 12px; }
+    .experience-timeline::before { display: none; }
+    .experience-item { width: 100%; left: 0 !important; text-align: left !important; margin-bottom: 2rem; }
+    .experience-content { padding: 1.25rem 1.25rem 1.25rem 1rem; box-shadow: var(--shadow-lg); }
+    .experience-content::before { display: none !important; }
+    .experience-item::after { display: none !important; }
+    /* Add a subtle left accent to suggest a timeline without arrows/dots */
+    .experience-content { border-left: 4px solid var(--color-primary); }
+    body.dark-mode .experience-content { border-left-color: var(--color-secondary); }
 
     .projects-grid {
       grid-template-columns: 1fr;
