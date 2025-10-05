@@ -2044,6 +2044,14 @@ footer {
     margin-bottom: 2rem;
   }
 
+  /* Ensure decorative underline sits below multi-line titles */
+  .section-title::after {
+    position: static;
+    display: block;
+    transform: none;
+    margin: var(--space-4) auto 0;
+  }
+
   .skills-grid {
     margin-top: 4rem;
     grid-template-columns: 1fr;
@@ -2059,7 +2067,7 @@ footer {
     .experience-timeline { max-width: 100%; padding: 0 12px; }
     .experience-timeline::before { display: none; }
     .experience-item { width: 100%; left: 0 !important; text-align: left !important; margin-bottom: 2rem; }
-    .experience-content { padding: 1.25rem 1.25rem 1.25rem 1rem; box-shadow: var(--shadow-lg); }
+    .experience-content { padding: 1.1rem 1.1rem 1.1rem 0.9rem; box-shadow: var(--shadow-lg); }
     .experience-content::before { display: none !important; }
     .experience-item::after { display: none !important; }
     /* Add a subtle left accent to suggest a timeline without arrows/dots */
@@ -2103,6 +2111,20 @@ footer {
     height: 45px;
     font-size: 1.3rem;
   }
+}
+
+/* Additional mobile typography tightening for experience cards */
+@media (max-width: 768px) {
+  .experience-content .company { font-size: 1.05rem; margin-bottom: 0.25rem; }
+  .experience-content .position { font-size: 0.98rem; }
+  .experience-content .duration { font-size: 0.9rem; opacity: 0.85; margin: 0.25rem 0 0.5rem; }
+  .experience-content .achievements { margin-top: 0.5rem; }
+  .experience-content .achievements li { font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.4rem; }
+}
+
+/* Specific tweak for testimonials title underline on small screens */
+@media (max-width: 768px) {
+  .testimonials-title::after { position: static; display: block; transform: none; margin: var(--space-4) auto 0; }
 }
 
 @media (max-width: 480px) {
