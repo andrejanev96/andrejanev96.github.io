@@ -3181,6 +3181,25 @@ body.dark-mode .carousel-indicator {
   .zoom-hint { display: inline-flex; }
 }
 
+/* On small screens place zoom hint at top-left to avoid arrow/button overlap */
+@media (max-width: 768px) {
+  .zoom-hint { left: 10px; right: auto; top: 10px; }
+}
+
+/* Focus-visible styles for keyboard accessibility */
+.carousel-indicator:focus-visible,
+.zoom-hint:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+}
+
+body.dark-mode .carousel-indicator:focus-visible,
+body.dark-mode .zoom-hint:focus-visible {
+  outline-color: var(--color-secondary);
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.25);
+}
+
 /* Additional mobile hardening for hero layout */
 @media (max-width: 768px) {
   .hero, .hero .container, .hero-content { max-width: 100vw; overflow-x: hidden; }
