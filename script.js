@@ -142,6 +142,21 @@ document.addEventListener("DOMContentLoaded", function () {
   elementsToAnimate.forEach((el) => {
     observer.observe(el);
   });
+
+  // Initialize animated stats counter
+  initStatsCounter();
+
+  // Initialize typing animation
+  initTypingAnimation();
+
+  // Initialize interactive timeline
+  initInteractiveTimeline();
+
+  // Initialize back to top button
+  initBackToTop();
+
+  // Initialize availability badge
+  initAvailabilityBadge();
 });
 
 // Add loading state and smooth transitions
@@ -215,6 +230,213 @@ function throttle(func, delay) {
       }, delay - (currentTime - lastExecTime));
     }
   };
+}
+
+// Availability Badge Control
+function initAvailabilityBadge() {
+  const availabilityStatus = document.body.getAttribute('data-availability');
+  const badge = document.querySelector('.availability-badge');
+
+  if (!badge) return;
+
+  if (availabilityStatus === 'unavailable') {
+    // Change to amber/yellow "open to offers" styling
+    badge.classList.add('unavailable');
+    badge.querySelector('.status-text').textContent = 'Currently booked - Still reach out!';
+    badge.querySelector('.status-dot').style.background = '#f59e0b';
+    badge.style.background = 'rgba(245, 158, 11, 0.1)';
+    badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+  } else {
+    // Keep available styling (already set in HTML/CSS)
+    badge.classList.add('available');
+  }
+}
+
+// Back to Top Button
+function initBackToTop() {
+  const backToTopBtn = document.getElementById('backToTop');
+  if (!backToTopBtn) return;
+
+  // Show/hide based on scroll position
+  window.addEventListener('scroll', throttle(() => {
+    if (window.scrollY > 500) {
+      backToTopBtn.classList.add('visible');
+    } else {
+      backToTopBtn.classList.remove('visible');
+    }
+  }, 100));
+
+  // Scroll to top on click
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+
+// Interactive Experience Timeline
+function initInteractiveTimeline() {
+  const experienceItems = document.querySelectorAll('.experience-item');
+
+  experienceItems.forEach((item, index) => {
+    const content = item.querySelector('.experience-content');
+    const achievements = item.querySelector('.achievements');
+
+    if (!content || !achievements) return;
+
+    // Create toggle button with cheeky text
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'timeline-toggle';
+    toggleBtn.innerHTML = '<span class="toggle-text">The Boring Details</span><i class="fas fa-chevron-down"></i>';
+    toggleBtn.setAttribute('aria-label', 'Toggle experience details');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+
+    // Insert button at the end of content (bottom center)
+    content.appendChild(toggleBtn);
+
+    // Extract year from duration and add year label
+    const duration = item.querySelector('.duration');
+    if (duration) {
+      const durationText = duration.textContent;
+      const yearMatch = durationText.match(/\b(20\d{2})/); // Match year starting with 20
+
+      if (yearMatch) {
+        const year = yearMatch[1];
+        const yearLabel = document.createElement('div');
+        yearLabel.className = 'timeline-year';
+        yearLabel.textContent = year;
+        item.appendChild(yearLabel);
+      }
+    }
+
+    // Add "current" badge to first item (current job)
+    if (index === 0) {
+      const currentBadge = document.createElement('div');
+      currentBadge.className = 'current-job-badge';
+      currentBadge.innerHTML = '<i class="fas fa-briefcase"></i> CURRENT';
+      content.insertBefore(currentBadge, content.firstChild);
+      item.classList.add('current-job');
+    }
+
+    // Collapse all except first one
+    if (index !== 0) {
+      item.classList.add('collapsed');
+      toggleBtn.classList.add('collapsed');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    // Toggle on click
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isCollapsed = item.classList.toggle('collapsed');
+      toggleBtn.classList.toggle('collapsed');
+      toggleBtn.setAttribute('aria-expanded', !isCollapsed);
+    });
+  });
+}
+
+// Typing Animation for Subtitle
+function initTypingAnimation() {
+  const subtitle = document.querySelector('.subtitle');
+  if (!subtitle) return;
+
+  const texts = [
+    'Computer Engineer',
+    'Product Specialist',
+    'Web Developer',
+    'Problem Solver'
+  ];
+
+  let textIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+  let typingSpeed = 100;
+
+  function type() {
+    const currentText = texts[textIndex];
+
+    if (isDeleting) {
+      subtitle.textContent = currentText.substring(0, charIndex - 1);
+      charIndex--;
+      typingSpeed = 50;
+    } else {
+      subtitle.textContent = currentText.substring(0, charIndex + 1);
+      charIndex++;
+      typingSpeed = 100;
+    }
+
+    // Add blinking cursor
+    subtitle.innerHTML = subtitle.textContent + '<span class="typing-cursor">|</span>';
+
+    if (!isDeleting && charIndex === currentText.length) {
+      // Pause at end
+      typingSpeed = 2000;
+      isDeleting = true;
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      textIndex = (textIndex + 1) % texts.length;
+      typingSpeed = 500;
+    }
+
+    setTimeout(type, typingSpeed);
+  }
+
+  // Start typing animation after a short delay
+  setTimeout(type, 1000);
+}
+
+// Animated Stats Counter
+function initStatsCounter() {
+  const statNumbers = document.querySelectorAll('.stat-number');
+  let hasAnimated = false;
+
+  const animateCounter = (element) => {
+    const target = element.textContent.trim();
+    const isPercentage = target.includes('%');
+    const hasPlus = target.includes('+');
+    const numericValue = parseInt(target.replace(/[^\d]/g, ''));
+
+    if (isNaN(numericValue)) return;
+
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const increment = numericValue / steps;
+    let current = 0;
+    let step = 0;
+
+    const timer = setInterval(() => {
+      current += increment;
+      step++;
+
+      if (step >= steps) {
+        current = numericValue;
+        clearInterval(timer);
+      }
+
+      let displayValue = Math.floor(current);
+      if (isPercentage) displayValue += '%';
+      if (hasPlus) displayValue += '+';
+
+      element.textContent = displayValue;
+    }, duration / steps);
+  };
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && !hasAnimated) {
+        hasAnimated = true;
+        statNumbers.forEach((stat, index) => {
+          setTimeout(() => animateCounter(stat), index * 100);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const heroStats = document.querySelector('.hero-stats');
+  if (heroStats) {
+    statsObserver.observe(heroStats);
+  }
 }
 
 // Apply throttling to scroll events
@@ -456,44 +678,56 @@ function addNotificationStyles() {
         max-width: 400px;
         min-width: 300px;
       }
-      
+
+      /* Dark mode support */
+      .dark-mode .notification {
+        background: #2d3748;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      }
+
       .notification.show {
         transform: translateX(0);
       }
-      
+
       .notification-content {
         padding: 1.5rem;
         display: flex;
         align-items: flex-start;
         gap: 1rem;
       }
-      
+
       .notification-success {
         border-left: 4px solid #27ae60;
       }
-      
+
       .notification-error {
         border-left: 4px solid #e74c3c;
       }
-      
+
       .notification-success i:first-child {
         color: #27ae60;
         font-size: 1.2rem;
         margin-top: 0.1rem;
       }
-      
+
       .notification-error i:first-child {
         color: #e74c3c;
         font-size: 1.2rem;
         margin-top: 0.1rem;
       }
-      
+
       .notification-content span {
         flex: 1;
         line-height: 1.4;
         font-size: 0.95rem;
+        color: #333;
       }
-      
+
+      /* Dark mode text color */
+      .dark-mode .notification-content span {
+        color: #e2e8f0;
+      }
+
       .notification-close {
         background: none;
         border: none;
@@ -504,12 +738,22 @@ function addNotificationStyles() {
         transition: all 0.2s ease;
         margin-left: 0.5rem;
       }
-      
+
       .notification-close:hover {
         color: #333;
         background: #f5f5f5;
       }
-      
+
+      /* Dark mode close button */
+      .dark-mode .notification-close {
+        color: #a0aec0;
+      }
+
+      .dark-mode .notification-close:hover {
+        color: #e2e8f0;
+        background: #4a5568;
+      }
+
       @media (max-width: 768px) {
         .notification {
           top: 10px;
@@ -519,7 +763,7 @@ function addNotificationStyles() {
           min-width: auto;
           transform: translateY(-100px);
         }
-        
+
         .notification.show {
           transform: translateY(0);
         }
