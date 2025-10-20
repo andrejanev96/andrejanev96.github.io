@@ -157,6 +157,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize availability badge
   initAvailabilityBadge();
+
+  // Initialize interactive profile photo
+  initProfilePhotoInteraction();
 });
 
 // Add loading state and smooth transitions
@@ -242,7 +245,7 @@ function initAvailabilityBadge() {
   if (availabilityStatus === 'unavailable') {
     // Change to amber/yellow "open to offers" styling
     badge.classList.add('unavailable');
-    badge.querySelector('.status-text').textContent = 'Currently booked - Still reach out!';
+    badge.querySelector('.status-text').textContent = 'Currently booked. You can still reach out though!';
     badge.querySelector('.status-dot').style.background = '#f59e0b';
     badge.style.background = 'rgba(245, 158, 11, 0.1)';
     badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
@@ -250,6 +253,55 @@ function initAvailabilityBadge() {
     // Keep available styling (already set in HTML/CSS)
     badge.classList.add('available');
   }
+}
+
+// Interactive Profile Photo with Multiple Reactions
+function initProfilePhotoInteraction() {
+  const profilePhoto = document.querySelector('.profile-photo');
+  const profileImg = document.querySelector('.profile-img');
+  const speechBubble = document.querySelector('.speech-bubble');
+
+  if (!profilePhoto || !profileImg || !speechBubble) return;
+
+  const reactions = [
+    '😠 Hey, who put me here?',
+    '😵 Stop poking me!',
+    '😅 Again? Really?',
+    '🤔 What do you want?',
+    '😤 I\'m trying to look professional!',
+    '🙄 Not this again...',
+    '😆 That tickles!',
+    '🤨 Can I help you?',
+    '😎 I\'m kind of a big deal',
+    '🥱 This is getting old...'
+  ];
+
+  let currentReactionIndex = 0;
+
+  profilePhoto.addEventListener('click', () => {
+    // Remove hint class on first click
+    speechBubble.classList.remove('hint');
+
+    // Add shake animation to image
+    profileImg.classList.add('shake');
+
+    // Change speech bubble text
+    currentReactionIndex = Math.floor(Math.random() * reactions.length);
+    speechBubble.textContent = reactions[currentReactionIndex];
+
+    // Show speech bubble
+    speechBubble.classList.add('show');
+
+    // Remove shake animation after it completes
+    setTimeout(() => {
+      profileImg.classList.remove('shake');
+    }, 500);
+
+    // Hide speech bubble after 3 seconds
+    setTimeout(() => {
+      speechBubble.classList.remove('show');
+    }, 3000);
+  });
 }
 
 // Back to Top Button
